@@ -1,23 +1,26 @@
 import React, { Component } from 'react';
-// import axios from 'axios';
+import PropTypes from 'prop-types';
 
-export class Searchbar extends Component {
+
+class Searchbar extends Component {
     state = {
-        searchName: '',
+        query: '',
     }
 
-    heandelNameChange = e => {
-        this.setState({ searchName: e.currentTarget.value.toLowerCase()})
+    heandelChange = e => {
+        this.setState({ query: e.currentTarget.value.toLowerCase().trim()})
     }
 
 
     handelSubmit = e => {
         e.preventDefault();
-        this.props.onSubmit(this.state.searchName);
-        this.setState({ searchName: ''});
+        const { query } = this.state;
+        this.props.onSubmit(query);
+        this.setState({ query: ''});
     }
 
     render() {
+        const { query } = this.state;
         return (
             <header className="searchbar">
                 <form className="form" onSubmit={this.handelSubmit}>
@@ -29,8 +32,8 @@ export class Searchbar extends Component {
                         className="input"
                         type="text"
                         name='searchName'
-                        onChange={this.heandelNameChange}
-                        value={this.state.searchName}
+                        onChange={this.heandelChange}
+                        value={query}
                         // autocomplete="off"
                         // autofocus
                         placeholder="Search images and photos"
@@ -40,3 +43,10 @@ export class Searchbar extends Component {
         )
     }
 }
+
+export default Searchbar;
+
+Searchbar.propTypes = {
+    onSubmit: PropTypes.func.isRequired
+}
+
