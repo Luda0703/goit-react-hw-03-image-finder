@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-// import Notiflix from 'notiflix';
-// import axios from 'axios';
+import Notiflix from 'notiflix';
 import Searchbar from './Searchbar/Searchbar';
 import * as Service from '../Service/Service';
 import ImageGallery from './ImageGallery/ImageGallery';
-// import { ImageGalleryItem } from './ImageGalleryItem/ImageGalleryItem';
-// import { isVisible } from '@testing-library/user-event/dist/utils';
+import { Button } from './Button/Button';
+import { Loader } from './Loader/Loader';
+
 
 export class App extends Component {
   state = {
@@ -14,7 +14,6 @@ export class App extends Component {
     page: 1,
     isLoading: false,
     isVisible: false,
-    isEmpty: false,
     error: null,
   };
 
@@ -37,41 +36,41 @@ export class App extends Component {
         hits, 
         page: currentPage,
         totalHits, 
-        per_page =12
+        per_page
       } = await Service.getImages(query, page);
       if(hits.lenght === 0) {
-        this.setState({isEmpty: true})
+        this.setState(Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.'))
       }
       this.setState(prevState => ({
         images: [...prevState.images, ...hits],
-        isVisible: currentPage < Math.ceil(totalHits / per_page),
+        isVisible: currentPage < Math.ceil(totalHits / per_page)
       }))
-    } catch (error) {this.setState({error: error.message})
+     
+    } catch (error) {this.setState({error: error.massage})
   } finally {
     this.setState({isLoading: false})
   }
   }
   
-  onHandelSubmite = value => {
-    this.setState({query: value, page: 1, images: [], error: null, isEmpty: false})
-  };
+  // onHandleSubmite = value => {
+  //   this.setState({query: value, page: 1, images: [], error: null})
+  // };
 
   onLoadMore = () => {
     this.setState(prevState => ({page: prevState.page +1}))
   }
   
   render() {
-    const { images } = this.state;
+    const {images, isVisible, isLoading, error} = this.state
     return (
-      <div>
-        <Searchbar onSubmite={this.onHandelSubmite}/>
-        {/* {error && <Text textAlign="center">❌ Something went wrong - {error}</Text>}
-        {isEmpty && <Text textAlign="center">Sorry. There are no images ... 😭</Text>}  */}
-        <ImageGallery images={images}/>
+      <>
+        <Searchbar onSubmite={this.onHandleSubmite}/>
+        {error && <h2>Пожалуйста, введите слово для поиска!</h2>}
+        {images.length > 0 && <ImageGallery images={images}/>}
+        {isLoading && <Loader/>}
+        {isVisible && <Button onClick={this.onLoadMore}/>}
         
-        
-
-      </div>
+      </>
     )
   }
 }

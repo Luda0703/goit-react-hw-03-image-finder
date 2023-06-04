@@ -12,18 +12,20 @@ class Searchbar extends Component {
     }
 
 
-    handelSubmit = e => {
-        e.preventDefault();
-        const { query } = this.state;
+    handleSubmit = e => {
+        e.preventDefault()
+        const {query}  = this.state;
         this.props.onSubmit(query);
-        this.setState({ query: ''});
+        this.setState({ query: ''})
     }
+  
 
     render() {
         const { query } = this.state;
+        // const { handleSubmit } = this.props
         return (
             <header className="searchbar">
-                <form className="form" onSubmit={this.handelSubmit}>
+                <form className="form" onSubmit={this.handleSubmit}>
                     <button type="submit" className="button">
                         <span className="button-label">Search</span>
                     </button>
