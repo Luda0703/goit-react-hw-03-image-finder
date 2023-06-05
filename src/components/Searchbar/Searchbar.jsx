@@ -44,8 +44,6 @@ class Searchbar extends Component {
                         name='searchName'
                         onChange={this.heandelChange}
                         value={query}
-                        // autocomplete="off"
-                        // autofocus
                         placeholder="Search images and photos"
                     />
                 </SearchForm>

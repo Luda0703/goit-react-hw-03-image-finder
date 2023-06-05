@@ -64,12 +64,6 @@ export class App extends Component {
     this.setState(prevState => ({page: prevState.page +1}))
   }
 
-  // toggleModal = () => {
-  //   this.setState(({showModal}) => ({
-  //     showModal: !showModal,
-  //   }))
-  // }
-
   toggleModal = (largeImage, tags) => {
     this.setState({
       showModal: true,
