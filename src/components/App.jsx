@@ -5,6 +5,8 @@ import * as Service from '../Service/Service';
 import ImageGallery from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
+import './App.module.css';
+
 
 
 export class App extends Component {
@@ -13,7 +15,7 @@ export class App extends Component {
     query: '',
     page: 1,
     isLoading: false,
-    isVisible: false,
+    total: 0,
     error: null,
   };
 
@@ -32,18 +34,16 @@ export class App extends Component {
     this.setState({isLoading: true});
 
     try {
-      const {
-        hits, 
-        page: currentPage,
-        totalHits, 
-        per_page
-      } = await Service.getImages(query, page);
-      if(hits.lenght === 0) {
-        this.setState(Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.'))
+      
+      const {hits, totalHits} = await Service.getImages(query, page);
+      
+      if(hits.length === 0) {
+        return (Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.'))
       }
+     
       this.setState(prevState => ({
         images: [...prevState.images, ...hits],
-        isVisible: currentPage < Math.ceil(totalHits / per_page)
+        total: totalHits
       }))
      
     } catch (error) {this.setState({error: error.massage})
@@ -52,24 +52,24 @@ export class App extends Component {
   }
   }
   
-  // onHandleSubmite = value => {
-  //   this.setState({query: value, page: 1, images: [], error: null})
-  // };
+  onHandleSubmite = value => {
+    this.setState({query: value, page: 1, images: []})
+  };
 
   onLoadMore = () => {
     this.setState(prevState => ({page: prevState.page +1}))
   }
   
   render() {
-    const {images, isVisible, isLoading, error} = this.state
+    const {images, total, isLoading, error} = this.state
+    const totalPage = total/images.length
     return (
       <>
-        <Searchbar onSubmite={this.onHandleSubmite}/>
-        {error && <h2>Пожалуйста, введите слово для поиска!</h2>}
+        <Searchbar onSubmit={this.onHandleSubmite}/>
+        {error && <h2>Please enter a search term!!</h2>}
         {images.length > 0 && <ImageGallery images={images}/>}
         {isLoading && <Loader/>}
-        {isVisible && <Button onClick={this.onLoadMore}/>}
-        
+        {totalPage>1 && !isLoading && images.length>0 && <Button onClick={this.onLoadMore}/>}
       </>
     )
   }
