@@ -5,6 +5,7 @@ import * as Service from '../Service/Service';
 import ImageGallery from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
+import Modal from './Modal/Modal';
 import './App.module.css';
 
 
@@ -17,6 +18,9 @@ export class App extends Component {
     isLoading: false,
     total: 0,
     error: null,
+    showModal: false,
+    largeImage: '',
+    tags: '',
   };
 
   componentDidUpdate(_, prevState) {
@@ -59,15 +63,38 @@ export class App extends Component {
   onLoadMore = () => {
     this.setState(prevState => ({page: prevState.page +1}))
   }
+
+  // toggleModal = () => {
+  //   this.setState(({showModal}) => ({
+  //     showModal: !showModal,
+  //   }))
+  // }
+
+  toggleModal = (largeImage, tags) => {
+    this.setState({
+      showModal: true,
+      largeImage,
+      tags,
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      showModal: false,
+      largeImage: '',
+      tags: '',
+    });
+  };
   
   render() {
-    const {images, total, isLoading, error} = this.state
+    const {images, total, isLoading, error, showModal, tags, largeImage} = this.state
     const totalPage = total/images.length
     return (
       <>
         <Searchbar onSubmit={this.onHandleSubmite}/>
         {error && <h2>Please enter a search term!!</h2>}
-        {images.length > 0 && <ImageGallery images={images}/>}
+        {images.length > 0 && <ImageGallery images={images} toggleModal={this.toggleModal} />}
+        {showModal && <Modal onClose={this.closeModal} tags={tags} largeImage={largeImage}/>}
         {isLoading && <Loader/>}
         {totalPage>1 && !isLoading && images.length>0 && <Button onClick={this.onLoadMore}/>}
       </>
